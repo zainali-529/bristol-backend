@@ -28,7 +28,8 @@ const allowedOrigins = process.env.NODE_ENV === 'production'
     'http://localhost:5173',  // Vite default port
     'http://localhost:3000', // Alternative frontend port
     'http://localhost:5174',
-    'https://bristol-user-frontend.vercel.app', // Alternative Vite port
+    'https://bristol-user-frontend.vercel.app',
+    'https://bristol-admin-frontend.vercel.app', // Alternative Vite port
     config.CLIENT_URL]
   : [
       config.CLIENT_URL
