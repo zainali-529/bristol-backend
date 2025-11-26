@@ -24,12 +24,13 @@ app.use(helmet({
 
 // CORS Configuration - Allow multiple origins in development
 const allowedOrigins = process.env.NODE_ENV === 'production' 
-  ? [config.CLIENT_URL]
+  ? [
+    'http://localhost:5173',  // Vite default port
+    'http://localhost:3000', // Alternative frontend port
+    'http://localhost:5174',
+    'https://bristol-user-frontend.vercel.app', // Alternative Vite port
+    config.CLIENT_URL]
   : [
-      'http://localhost:5173',  // Vite default port
-      'http://localhost:3000', // Alternative frontend port
-      'http://localhost:5174',
-      'https://bristol-user-frontend.vercel.app', // Alternative Vite port
       config.CLIENT_URL
     ];
 
