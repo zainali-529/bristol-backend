@@ -16,7 +16,8 @@ const router = express.Router();
 const stepImagesUpload = upload.fields([
   { name: 'stepImage1', maxCount: 1 },
   { name: 'stepImage2', maxCount: 1 },
-  { name: 'stepImage3', maxCount: 1 }
+  { name: 'stepImage3', maxCount: 1 },
+  { name: 'stepImage4', maxCount: 1 }
 ]);
 
 const singleStepImageUpload = upload.single('stepImage');
@@ -29,9 +30,9 @@ const validateWorkSteps = [
       if (typeof value === 'string') {
         steps = JSON.parse(value);
       }
-      return Array.isArray(steps) && steps.length === 3;
+      return Array.isArray(steps) && steps.length === 4;
     })
-    .withMessage('Exactly 3 steps are required'),
+    .withMessage('Exactly 4 steps are required'),
   
   body('isActive')
     .optional()
@@ -41,8 +42,8 @@ const validateWorkSteps = [
 
 const validateSingleStep = [
   param('order')
-    .isInt({ min: 1, max: 3 })
-    .withMessage('Order must be 1, 2, or 3'),
+    .isInt({ min: 1, max: 4 })
+    .withMessage('Order must be 1, 2, 3, or 4'),
   
   body('title')
     .optional()
@@ -86,7 +87,7 @@ router.put('/admin',
   updateWorkSteps
 );
 
-// Update single step by order (1, 2, or 3)
+// Update single step by order (1, 2, 3, or 4)
 router.patch('/admin/step/:order', 
   protect, 
   admin, 

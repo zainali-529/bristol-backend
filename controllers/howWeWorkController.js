@@ -66,16 +66,16 @@ const updateWorkSteps = async (req, res) => {
       });
     }
     
-    if (steps.length !== 3) {
+    if (steps.length !== 4) {
       return res.status(400).json({
         success: false,
-        message: 'Exactly 3 steps are required'
+        message: 'Exactly 4 steps are required'
       });
     }
     
     // Handle image uploads from req.files
     if (req.files) {
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 4; i++) {
         const fieldName = `stepImage${i + 1}`;
         if (req.files[fieldName]) {
           // Delete old image if exists
@@ -95,7 +95,7 @@ const updateWorkSteps = async (req, res) => {
       }
     } else {
       // If no files uploaded, keep existing images
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 4; i++) {
         if (!steps[i].image && doc.steps[i] && doc.steps[i].image) {
           steps[i].image = doc.steps[i].image;
         }
@@ -140,6 +140,7 @@ const updateWorkSteps = async (req, res) => {
       image: step.image,
       title: step.title.trim(),
       description: step.description.trim(),
+      icon: step.icon ? step.icon.trim() : undefined, // Icon is optional
       order: index + 1
     }));
     
@@ -160,7 +161,7 @@ const updateWorkSteps = async (req, res) => {
     
     // Clean up uploaded images if update fails
     if (req.files) {
-      for (let i = 1; i <= 3; i++) {
+      for (let i = 1; i <= 4; i++) {
         const fieldName = `stepImage${i}`;
         if (req.files[fieldName]) {
           await deleteImage(req.files[fieldName][0].filename).catch(console.error);
@@ -190,14 +191,14 @@ const updateWorkSteps = async (req, res) => {
 const updateSingleStep = async (req, res) => {
   try {
     const { order } = req.params;
-    const { title, description } = req.body;
+    const { title, description, icon } = req.body;
     
     // Validate order
     const stepOrder = parseInt(order);
-    if (isNaN(stepOrder) || stepOrder < 1 || stepOrder > 3) {
+    if (isNaN(stepOrder) || stepOrder < 1 || stepOrder > 4) {
       return res.status(400).json({
         success: false,
-        message: 'Order must be 1, 2, or 3'
+        message: 'Order must be 1, 2, 3, or 4'
       });
     }
     
@@ -259,6 +260,16 @@ const updateSingleStep = async (req, res) => {
         });
       }
       doc.steps[stepIndex].description = description.trim();
+    }
+    
+    if (icon !== undefined) {
+      if (icon && icon.trim().length > 50) {
+        return res.status(400).json({
+          success: false,
+          message: 'Icon name cannot exceed 50 characters'
+        });
+      }
+      doc.steps[stepIndex].icon = icon ? icon.trim() : undefined;
     }
     
     await doc.save();

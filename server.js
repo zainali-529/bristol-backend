@@ -83,6 +83,7 @@ app.get('/api/health', (req, res) => {
 // Import routes
 // Public routes (User Site)
 app.use('/api/contacts', require('./routes/contacts'));
+app.use('/api/quotes', require('./routes/quotes'));
 app.use('/api/services', require('./routes/services'));
 app.use('/api/suppliers', require('./routes/suppliers'));
 app.use('/api/why-trust-us', require('./routes/whyTrustUs'));
@@ -94,6 +95,8 @@ app.use('/api/documents', require('./routes/documents'));
 app.use('/api/energy-prices', require('./routes/energyPrices'));
 app.use('/api/theme', require('./routes/themes'));
 app.use('/api/hero', require('./routes/hero'));
+app.use('/api/industries', require('./routes/industries'));
+app.use('/api/testimonials', require('./routes/testimonials'));
 
 // Admin authentication routes
 app.use('/api/admin/auth', require('./routes/adminAuth'));
