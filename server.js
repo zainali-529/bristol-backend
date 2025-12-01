@@ -101,6 +101,9 @@ app.use('/api/testimonials', require('./routes/testimonials'));
 // Admin authentication routes
 app.use('/api/admin/auth', require('./routes/adminAuth'));
 
+// Admin dashboard routes (requires authentication)
+app.use('/api/admin/dashboard', require('./routes/dashboard'));
+
 // Future routes (uncomment when you create route files)
 // app.use('/api/auth', require('./routes/auth'));
 // app.use('/api/users', require('./routes/users'));
