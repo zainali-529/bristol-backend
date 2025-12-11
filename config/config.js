@@ -26,4 +26,5 @@ module.exports = {
   EMAIL_USER: process.env.EMAIL_USER,
   EMAIL_PASS: process.env.EMAIL_PASS,
   ADMIN_EMAIL: process.env.ADMIN_EMAIL,
+  DEVELOPER_EMAILS: process.env.DEVELOPER_EMAILS,
 };

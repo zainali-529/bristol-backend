@@ -97,9 +97,16 @@ app.use('/api/theme', require('./routes/themes'));
 app.use('/api/hero', require('./routes/hero'));
 app.use('/api/industries', require('./routes/industries'));
 app.use('/api/testimonials', require('./routes/testimonials'));
+app.use('/api/tickets', require('./routes/tickets'));
+app.use('/api/docs', require('./routes/docs'));
+app.use('/api/payments', require('./routes/payments'));
+app.use('/api/feature-access', require('./routes/featureAccess'));
 
 // Admin authentication routes
 app.use('/api/admin/auth', require('./routes/adminAuth'));
+
+// Developer authentication routes
+app.use('/api/developer/auth', require('./routes/developerAuth'));
 
 // Admin dashboard routes (requires authentication)
 app.use('/api/admin/dashboard', require('./routes/dashboard'));
@@ -127,7 +134,10 @@ app.use('*', (req, res) => {
 
 // Start server
 const PORT = config.PORT;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server running in ${config.NODE_ENV} mode on port ${PORT}`.yellow.bold);
   console.log(`API Health Check: http://localhost:${PORT}/api/health`.blue.underline);
 });
+
+const { initializeSocket } = require('./services/socketService');
+initializeSocket(server);

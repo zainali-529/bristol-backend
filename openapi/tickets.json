@@ -1,0 +1,113 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Ticket API",
+    "version": "1.0.0",
+    "description": "Ticket management endpoints for admin-developer workflow"
+  },
+  "paths": {
+    "/api/tickets": {
+      "post": {
+        "summary": "Create ticket",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TicketCreate"
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Created" } }
+      },
+      "get": {
+        "summary": "List tickets",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "in": "query", "name": "status", "schema": { "type": "string" } },
+          { "in": "query", "name": "priority", "schema": { "type": "string" } },
+          { "in": "query", "name": "category", "schema": { "type": "string" } },
+          { "in": "query", "name": "page", "schema": { "type": "integer", "default": 1 } },
+          { "in": "query", "name": "limit", "schema": { "type": "integer", "default": 10 } },
+          { "in": "query", "name": "search", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/tickets/{id}": {
+      "get": {
+        "summary": "Get ticket",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "in": "path", "name": "id", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "OK" }, "404": { "description": "Not Found" } }
+      },
+      "patch": {
+        "summary": "Update ticket status/priority",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "in": "path", "name": "id", "required": true, "schema": { "type": "string" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TicketUpdate" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/tickets/{id}/comments": {
+      "post": {
+        "summary": "Add comment",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "in": "path", "name": "id", "required": true, "schema": { "type": "string" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CommentCreate" }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Created" } }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+    },
+    "schemas": {
+      "TicketCreate": {
+        "type": "object",
+        "required": ["title", "description"],
+        "properties": {
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "status": { "type": "string", "enum": ["open", "in-progress", "resolved", "closed"] },
+          "priority": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+          "category": { "type": "string", "enum": ["bug", "feature", "request", "discussion"] },
+          "attachments": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "TicketUpdate": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "priority": { "type": "string" },
+          "category": { "type": "string" }
+        }
+      },
+      "CommentCreate": {
+        "type": "object",
+        "required": ["message"],
+        "properties": {
+          "message": { "type": "string" },
+          "attachments": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

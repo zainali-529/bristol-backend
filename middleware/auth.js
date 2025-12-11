@@ -27,4 +27,13 @@ const adminAuth = (req, res, next) => {
   }
 };
 
-module.exports = { auth, adminAuth };
+// Middleware to check if user is developer
+const developerAuth = (req, res, next) => {
+  if (req.user && req.user.role === 'developer') {
+    next();
+  } else {
+    res.status(403).json({ message: 'Access denied. Developer privileges required.' });
+  }
+};
+
+module.exports = { auth, adminAuth, developerAuth };

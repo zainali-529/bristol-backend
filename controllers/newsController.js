@@ -389,28 +389,23 @@ const updateNews = async (req, res) => {
       };
     }
     
-    // Handle additional images update
+    // Handle additional images update (append instead of replace)
     if (req.files && req.files.additionalImages) {
-      // Delete old additional images
-      if (news.additionalImages && news.additionalImages.length > 0) {
-        for (const img of news.additionalImages) {
-          if (img.publicId) {
-            await deleteImage(img.publicId).catch(console.error);
-          }
-        }
-      }
-      
-      const additionalImages = Array.isArray(req.files.additionalImages) 
-        ? req.files.additionalImages 
+      const existing = Array.isArray(news.additionalImages) ? news.additionalImages : [];
+      const startOrder = existing.length;
+      const incoming = Array.isArray(req.files.additionalImages)
+        ? req.files.additionalImages
         : [req.files.additionalImages];
-      
-      updateData.additionalImages = additionalImages.map((file, index) => ({
+
+      const newImages = incoming.map((file, index) => ({
         url: file.path,
         publicId: file.filename,
         alt: updateData[`additionalImageAlt${index}`] || '',
         caption: updateData[`additionalImageCaption${index}`] || '',
-        order: index
+        order: startOrder + index
       }));
+
+      updateData.additionalImages = [...existing, ...newImages];
     }
     
     // Parse tags if string

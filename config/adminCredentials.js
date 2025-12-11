@@ -2,7 +2,7 @@
 // No database required - hardcoded credentials for simplicity
 
 const ADMIN_CREDENTIALS = {
-  email: 'admin@bristolutilities.co.uk',
+  email: 'hehehaha7264@gmail.com',
   password: 'admin1234',
   role: 'admin',
   name: 'Bristol Utilities Admin'
@@ -22,8 +22,20 @@ const getAdminInfo = () => {
   return adminInfo;
 };
 
+// Update admin password (in-memory)
+const setAdminPassword = (newPassword) => {
+  ADMIN_CREDENTIALS.password = String(newPassword);
+};
+
+// Update admin profile fields (in-memory)
+const updateAdminProfile = (updates = {}) => {
+  if (updates.name) ADMIN_CREDENTIALS.name = String(updates.name);
+};
+
 module.exports = {
   ADMIN_CREDENTIALS,
   validateAdminCredentials,
-  getAdminInfo
+  getAdminInfo,
+  setAdminPassword,
+  updateAdminProfile,
 };
