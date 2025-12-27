@@ -251,7 +251,6 @@ const newsSchema = new mongoose.Schema({
 });
 
 // Indexes for better performance
-newsSchema.index({ slug: 1 });
 newsSchema.index({ status: 1, publishDate: -1 });
 newsSchema.index({ isActive: 1, status: 1, publishDate: -1 });
 newsSchema.index({ isFeatured: 1, publishDate: -1 });

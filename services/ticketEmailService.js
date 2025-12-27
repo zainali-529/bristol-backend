@@ -23,9 +23,6 @@ const templates = {
       <div style="margin-top:12px;padding:12px;background:#f9f9f9;border-left:4px solid ${brandColor}">
         ${ticket.description}
       </div>
-      <div style="margin-top:16px">
-        <a href="${ticket.link || '#'}" style="display:inline-block;padding:10px 16px;background:${brandColor};color:#fff;text-decoration:none;border-radius:6px">View Ticket</a>
-      </div>
     </div>
   </div>
   <p style="color:#888;text-align:center;font-size:12px;margin-top:8px">Bristol Utilities Ticketing</p>
@@ -41,9 +38,6 @@ const templates = {
     <div style="padding:20px">
       <p style="margin:0 0 12px 0">Status changed from <strong>${oldStatus}</strong> to <strong>${ticket.status}</strong>.</p>
       <p style="margin:0 0 8px 0"><strong>${ticket.title}</strong></p>
-      <div style="margin-top:8px">
-        <a href="${ticket.link || '#'}" style="display:inline-block;padding:10px 16px;background:${brandColor};color:#fff;text-decoration:none;border-radius:6px">View Ticket</a>
-      </div>
     </div>
   </div>
 </body></html>`,
@@ -58,9 +52,6 @@ const templates = {
     <div style="padding:20px">
       <p style="margin:0 0 12px 0">Priority changed from <strong>${oldPriority}</strong> to <strong>${ticket.priority}</strong>.</p>
       <p style="margin:0 0 8px 0"><strong>${ticket.title}</strong></p>
-      <div style="margin-top:8px">
-        <a href="${ticket.link || '#'}" style="display:inline-block;padding:10px 16px;background:${brandColor};color:#fff;text-decoration:none;border-radius:6px">View Ticket</a>
-      </div>
     </div>
   </div>
 </body></html>`,
@@ -83,16 +74,19 @@ const notifyDevelopers = async ({ subject, html }) => {
 };
 
 const sendTicketCreatedEmail = async (ticket) => {
+  if (ticket.notificationPreferences?.developer === false) return;
   const html = templates.ticketCreated(ticket);
   return notifyDevelopers({ subject: `New Ticket: ${ticket.title}`, html });
 };
 
 const sendTicketStatusChangedEmail = async (ticket, oldStatus) => {
+  if (ticket.notificationPreferences?.developer === false) return;
   const html = templates.statusChanged({ ticket, oldStatus });
   return notifyDevelopers({ subject: `Status Updated: ${ticket.title}`, html });
 };
 
 const sendPriorityEscalationEmail = async (ticket, oldPriority) => {
+  if (ticket.notificationPreferences?.developer === false) return;
   const html = templates.priorityEscalated({ ticket, oldPriority });
   return notifyDevelopers({ subject: `Priority Escalation: ${ticket.title}`, html });
 };
@@ -145,16 +139,25 @@ const sendReplyNotification = async ({ ticket, newReply, repliedBy }) => {
         <h3 style="font-size:14px;color:#666;margin:0 0 12px 0">Recent Conversation:</h3>
         ${conversationContext}
       </div>
-      
-      <div style="margin-top:20px;text-align:center">
-        <a href="${ticket.link || '#'}" style="display:inline-block;padding:12px 24px;background:${brandColor};color:#fff;text-decoration:none;border-radius:6px;font-weight:600">View Full Conversation</a>
-      </div>
     </div>
   </div>
   <p style="color:#888;text-align:center;font-size:12px;margin-top:12px">Bristol Utilities Ticketing System</p>
 </body></html>`;
 
-  const recipients = repliedBy?.role === 'admin' ? getDeveloperEmails() : [process.env.ADMIN_EMAIL || 'admin@bristolutilities.com'];
+  let recipients = [];
+  if (repliedBy?.role === 'admin') {
+    // Admin replied -> Notify Developer/User
+    if (ticket.notificationPreferences?.developer !== false) {
+      recipients = getDeveloperEmails();
+    }
+  } else {
+    // Developer/User replied -> Notify Admin
+    if (ticket.notificationPreferences?.admin !== false) {
+      recipients = [process.env.ADMIN_EMAIL || 'admin@bristolutilities.com'];
+    }
+  }
+  
+  if (recipients.length === 0) return;
   
   const results = await Promise.all(
     recipients.map((to) =>

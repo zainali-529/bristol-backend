@@ -26,7 +26,7 @@ const storage = new CloudinaryStorage({
     folder: 'bristol-utilities/suppliers',
     allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
     transformation: [
-      { width: 400, height: 300, crop: 'fill', quality: 'auto' }
+      { width: 800, crop: 'limit', quality: 'auto' }
     ],
   },
 });

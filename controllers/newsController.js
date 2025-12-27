@@ -10,8 +10,7 @@ const getNews = async (req, res) => {
     
     let query = {
       status: 'published',
-      isActive: true,
-      publishDate: { $lte: new Date() }
+      isActive: true
     };
     
     if (featured === 'true') {
@@ -60,8 +59,7 @@ const getNewsBySlug = async (req, res) => {
     const news = await News.findOne({ 
       slug: slug, 
       status: 'published',
-      isActive: true,
-      publishDate: { $lte: new Date() }
+      isActive: true
     });
     
     if (!news) {
@@ -430,6 +428,13 @@ const updateNews = async (req, res) => {
     // Parse publishDate if string
     if (updateData.publishDate && typeof updateData.publishDate === 'string') {
       updateData.publishDate = new Date(updateData.publishDate);
+    }
+
+    // Auto-set publishDate if publishing
+    if (updateData.status === 'published' && !updateData.publishDate) {
+      if (!news.publishDate || news.status !== 'published') {
+        updateData.publishDate = new Date();
+      }
     }
     
     const updatedNews = await News.findByIdAndUpdate(

@@ -220,7 +220,6 @@ const serviceSchema = new mongoose.Schema({
 });
 
 // Indexes for better performance
-serviceSchema.index({ slug: 1 });
 serviceSchema.index({ isActive: 1, displayOrder: 1 });
 serviceSchema.index({ isFeatured: 1, displayOrder: 1 });
 serviceSchema.index({ createdAt: -1 });

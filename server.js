@@ -138,6 +138,3 @@ const server = app.listen(PORT, () => {
   console.log(`Server running in ${config.NODE_ENV} mode on port ${PORT}`.yellow.bold);
   console.log(`API Health Check: http://localhost:${PORT}/api/health`.blue.underline);
 });
-
-const { initializeSocket } = require('./services/socketService');
-initializeSocket(server);

@@ -57,9 +57,7 @@ const priceAlertSchema = new mongoose.Schema({
 });
 
 // Indexes
-priceAlertSchema.index({ email: 1 });
 priceAlertSchema.index({ isActive: 1 });
-priceAlertSchema.index({ unsubscribeToken: 1 });
 
 // Generate unsubscribe token before saving
 priceAlertSchema.pre('save', function(next) {

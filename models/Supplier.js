@@ -100,7 +100,6 @@ const supplierSchema = new mongoose.Schema({
 });
 
 // Indexes
-supplierSchema.index({ slug: 1 });
 supplierSchema.index({ isActive: 1, displayOrder: 1 });
 supplierSchema.index({ createdAt: -1 });
 

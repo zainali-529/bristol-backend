@@ -11,6 +11,7 @@ const {
   addComment,
   markCommentsAsRead,
   pollTicketUpdates,
+  toggleNotification,
 } = require('../controllers/ticketController');
 
 const router = express.Router();
@@ -51,5 +52,6 @@ router.patch('/:id', protect, validateId, validateUpdate, updateTicket);
 router.post('/:id/comments', protect, uploadMiddleware, validateId, [body('message').trim().isLength({ min: 1, max: 5000 })], addComment);
 router.patch('/:id/read', protect, validateId, markCommentsAsRead);
 router.get('/:id/poll', protect, validateId, validateQuery, pollTicketUpdates);
+router.put('/:id/toggle-notification', protect, validateId, toggleNotification);
 
 module.exports = router;

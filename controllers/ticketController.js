@@ -173,14 +173,7 @@ const addComment = async (req, res) => {
     await session.commitTransaction();
     session.endSession();
 
-    const socketService = require('../services/socketService');
-    if (socketService && socketService.emitNewReply) {
-      socketService.emitNewReply(ticket._id.toString(), {
-        comment: newComment,
-        ticket: ticket,
-        timestamp: new Date(),
-      });
-    }
+    
 
     const { sendReplyNotification } = require('../services/ticketEmailService');
     sendReplyNotification({
@@ -276,6 +269,41 @@ const pollTicketUpdates = async (req, res) => {
   }
 };
 
+const toggleNotification = async (req, res) => {
+  try {
+    const ticket = await Ticket.findById(req.params.id);
+    if (!ticket) return res.status(404).json({ success: false, message: 'Ticket not found' });
+
+    const userRole = req.user?.role || 'admin';
+    
+    // Initialize preferences if missing
+    if (!ticket.notificationPreferences) {
+      ticket.notificationPreferences = { admin: true, developer: true };
+    }
+
+    if (userRole === 'admin') {
+      // Toggle admin preference
+      // If currently undefined (default true), set to false. If true, set to false. If false, set to true.
+      // But we just initialized it.
+      ticket.notificationPreferences.admin = !ticket.notificationPreferences.admin;
+    } else {
+      ticket.notificationPreferences.developer = !ticket.notificationPreferences.developer;
+    }
+
+    // Mark as modified because nested objects sometimes don't trigger save
+    ticket.markModified('notificationPreferences');
+    await ticket.save();
+
+    return res.json({
+      success: true,
+      data: ticket.notificationPreferences
+    });
+  } catch (err) {
+    console.error('Toggle notification error:', err);
+    return res.status(500).json({ success: false, message: 'Failed to toggle notification' });
+  }
+};
+
 module.exports = {
   createTicket,
   getTickets,
@@ -284,4 +312,5 @@ module.exports = {
   addComment,
   markCommentsAsRead,
   pollTicketUpdates,
+  toggleNotification,
 };

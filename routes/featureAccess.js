@@ -8,7 +8,7 @@ router.get('/:featureKey', param('featureKey').isLength({ min: 2, max: 50 }), ge
 router.post(
   '/:featureKey/demo/start',
   param('featureKey').isLength({ min: 2, max: 50 }),
-  body('durationMinutes').optional().isInt({ min: 1, max: 60 }),
+  body('durationMinutes').optional().isInt({ min: 1, max: 1440 }),
   startFeatureDemo
 );
 router.get(

@@ -16,7 +16,7 @@ const startFeatureDemo = async (req, res) => {
   try {
     const key = String(req.params.featureKey || '').toLowerCase();
     if (!key) return res.status(400).json({ success: false, message: 'featureKey is required' });
-    const durationMinutes = Number(req.body?.durationMinutes) || 5;
+    const durationMinutes = Number(req.body?.durationMinutes) || 1440;
     const doc = await FeatureAccess.findOneAndUpdate(
       { featureKey: key },
       { featureKey: key, demoUsed: true },

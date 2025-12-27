@@ -60,6 +60,10 @@ const TicketSchema = new mongoose.Schema(
     lastReplyAt: { type: Date },
     unreadByAdmin: { type: Number, default: 0 },
     unreadByDeveloper: { type: Number, default: 0 },
+    notificationPreferences: {
+      admin: { type: Boolean, default: true },
+      developer: { type: Boolean, default: true },
+    },
   },
   { timestamps: true }
 );
